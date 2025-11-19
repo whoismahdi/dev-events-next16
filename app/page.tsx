@@ -2,6 +2,8 @@ import EventCard from "@/components/EventCard"
 import ExploreBtn from "@/components/ExploreBtn"
 import { events } from "@/lib/constants"
 
+//  RJ4d6SX5g4bM774b
+// mahdiseda15_db_user
 
 const Page = () => {
   return (
