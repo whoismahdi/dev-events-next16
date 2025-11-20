@@ -1,11 +1,14 @@
 import EventCard from "@/components/EventCard"
 import ExploreBtn from "@/components/ExploreBtn"
-import { events } from "@/lib/constants"
+import { IEvent } from "@/database/event.model";
 
-//  RJ4d6SX5g4bM774b
-// mahdiseda15_db_user
 
-const Page = () => {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+const Page = async () => {
+  const resposne = await fetch(`${BASE_URL}/api/events`)
+  const {events} = await resposne.json()
+
   return (
     <section>
       <h1 className="text-center">The hub for Every Dev <br /> Event you can't miss</h1>
@@ -17,7 +20,7 @@ const Page = () => {
         <h3>Featured Events</h3>
 
         <ul className="events">
-          {events.map((event)=>(
+          {events && events.length > 0 && events.map((event : IEvent)=>(
             <li key={event.title}>
               <EventCard {...event} />
             </li>
