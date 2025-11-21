@@ -1,16 +1,110 @@
+import BookEvent from "@/components/BookEvent";
+import EventCard from "@/components/EventCard";
+import { IEvent } from "@/database/event.model";
+import { getSimilarEventBySlug } from "@/lib/actions/event.actions";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
+const EventDetailContent = ({icon, alt, label}:{icon: string, alt:string, label:string})=>(
+  <div className="flex-row-gap-2">
+    <Image  src={icon} alt={alt} width={17} height={17} />
+    <p>{label}</p>
+  </div>
+)
+
+const EventAgenda = ({agendaItems} : {agendaItems : string[]})=>(
+  <div className="agenda">
+    <h2>Agenda</h2>
+    <ul>
+      {agendaItems.map((item)=>(
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  </div>
+)
+
+const EventTags = ({tags}: {tags:string[]})=>(
+  <div className="flex flex-row gap-1.5 flex-wrap">
+    {tags.map((tag)=>(
+      <div className="pill" key={tag}>{tag}</div>
+    ))}
+  </div>
+)
 const EventDetailPage = async ({params}:{params : Promise<{slug:string}>}) => {
   const {slug} = await params;
-  const req = await fetch(`${BASE_URL}/api/events/${slug}`)
-  const {event} = await req.json();
+  const req = await fetch(`${BASE_URL}/api/events/${slug}` ,{
+    next: {revalidate: 60}
+  })
+  const {event : {description, image, overview, date, time, location, mode, agenda, audience, organizer, tags}} = await req.json();
 
-  if (!event) return notFound();
+  if (!description) return notFound();
+
+  const booking = 10;
+
+  const similarEvents : IEvent[] = await getSimilarEventBySlug(slug)
+  
   return (
     <section id="event">
-      <h1>Event Details: <br /> {slug}</h1>
+      <div className="header">
+        <h1>Event Description</h1>
+        <p>{description}</p>
+      </div>
+      <div className="details">
+        {/* left side - Event content */}
+        <div className="content">
+          <Image src={image} alt='Event Banner' className="banner" width={800} height={800} />
+
+          <section className="flex-col-gap-2">
+            <h2>Overview</h2>
+            <p>{overview}</p>
+          </section>
+
+          <section className="flex-col-gap-2">
+            <h2>Event detail</h2>
+            <EventDetailContent icon="/icons/calendar.svg" alt="calendar" label={date} />
+            <EventDetailContent icon="/icons/clock.svg" alt="clock" label={time} />
+            <EventDetailContent icon="/icons/pin.svg" alt="pin" label={location} />
+            <EventDetailContent icon="/icons/mode.svg" alt="mode" label={mode} />
+            <EventDetailContent icon="/icons/audience.svg" alt="audience" label={audience} />
+          </section>
+
+
+          <EventAgenda agendaItems={(agenda)} />
+
+          <section className="flex-col-gap-2">
+            <h2>Aboutthe Organizer</h2>
+            <p>{organizer}</p>
+          </section>
+
+          <EventTags tags={(tags)} />
+        </div>
+        {/* Right side - Booking content */}
+
+        <aside className="booking">
+          <div className="signup-card">
+            <h2>Book your spot</h2>
+            {booking > 0 ?(
+              <p className="text-sm">
+                join {booking} people who have already booked their spot! 
+              </p>
+            ) : 
+            <p className="text-sm">Be the first to book your spot!</p>
+            }
+
+            <BookEvent />
+          </div>
+        </aside>
+      </div>
+      <div className="flex w-full flex-col gap-4 pt-20">
+        <h2>Similar Events</h2>
+        <div className="events">
+          {similarEvents.length> 0 && similarEvents.map((similarEvent:IEvent)=>(
+            <EventCard key={similarEvent.title} {...similarEvent} />
+          ))}
+        </div>
+      </div>
     </section>
   )
 }
