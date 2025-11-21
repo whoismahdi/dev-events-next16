@@ -1,7 +1,5 @@
 import { Suspense } from "react"
 
-export const dynamic = 'force-dynamic'; 
-
 const EventDetailPage = async ({params}:{params : {slug:string}}) => {
   const slug = params.slug;
  return(

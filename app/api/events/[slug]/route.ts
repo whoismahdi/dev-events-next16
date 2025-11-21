@@ -1,8 +1,8 @@
 import connectDB from "@/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
+
 import Event , { IEvent } from "@/database/event.model";
 
-export const dynamic = 'force-dynamic'; 
 
 type RouteParams = {
     params: Promise<{
