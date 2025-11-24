@@ -26,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      <meta name="google-site-verification" content="cn6_q_22e7fA423ebj594xjuYiufq4EEGG_EUUnyJi0" />
+      </head>
       <body
         className={`${SchibstedGrotesk.variable} ${MartianMono.variable} min-h-screen antialiased`}
       >
