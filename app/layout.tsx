@@ -48,7 +48,10 @@ export default function RootLayout({
             className="custom-rays"
           />
         </div>
-        <main>{children}</main>
+        <main>
+          {children}
+           <SpeedInsights />
+        </main>
       </body>
     </html>
   );
